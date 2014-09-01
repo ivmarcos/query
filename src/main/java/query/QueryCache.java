@@ -28,7 +28,7 @@ public class QueryCache {
 
 	public void put(Object result) {
 		if (!isActive()) return;
-		LocalCache
+		Cache
 			.newBuilder()
 			.key(getKey())
 			.listen(getListenerClasses())
@@ -39,7 +39,7 @@ public class QueryCache {
 	
 	private void lookCache() {
 		logger.info("Looking at cache");
-		result = LocalCache.get(getKey());
+		result = Cache.get(getKey());
 	}
 
 	public Object getResult() {

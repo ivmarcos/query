@@ -3,37 +3,39 @@ package query;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import query.domain.Wrapper;
-import query.model.QueryWrapper;
+import query.model.Feature;
 
-public class Query<T> {
+public class WithCache<T> {
+	
+	final static Logger logger = LoggerFactory.getLogger(WithCache.class);
 
 	private final Wrapper wrapper;
 	
-	public Query(EntityManager entityManager) {
-		wrapper = new QueryWrapper(entityManager);
+	public WithCache(Wrapper wrapper, Object... keys) {
+		wrapper.setFeature(Feature.CACHE_MODE, true);
+		wrapper.getCache().setKey(keys);
+		this.wrapper = wrapper;
 	}
 	
-	public Query(EntityManager entityManager, Class<T> entityClass) {
-		wrapper = new QueryWrapper(entityManager);
-		wrapper.setEntityClass(entityClass);
+	public WithCache(Wrapper wrapper) {
+		wrapper.setFeature(Feature.CACHE_MODE, true);
+		this.wrapper = wrapper;
 	}
 	
-	public Query<T> query(String query){
+	public WithCache<T> query(String query){
 		wrapper.setQueryString(query);
 		return this;
 	}
 	
-	public WithCache<T> cache(){
-		return new WithCache<T>(wrapper);
+	public WithCache<T> listen(Class<?>... classes){
+		wrapper.getCache().setListenerClasses(classes);
+		return this;
 	}
 	
-	public WithCache<T> cache(Object... keys){
-		return new WithCache<T>(wrapper, keys);
-	}
-
 	public From<?> from(Class<?> entityClass) {
 		return new From<>(wrapper, entityClass);
 	}
@@ -42,7 +44,7 @@ public class Query<T> {
 		return new Where<T>(wrapper, field);
 	}
 	
-	public Where<T> parameters(Map<String, Object> parameters){
+	public Where<T> where(Map<String, Object> parameters){
 		return new Where<T>(wrapper, parameters);
 	}
 	
@@ -77,4 +79,5 @@ public class Query<T> {
 	public Limit<T> limit(int limit){
 		return new Limit<>(wrapper, limit);
 	}
+	
 }

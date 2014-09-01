@@ -1,83 +1,128 @@
 package query;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import query.domain.Wrapper;
-import query.model.Feature;
 
-public class Cache<T> {
+public abstract class Cache {
 	
 	final static Logger logger = LoggerFactory.getLogger(Cache.class);
+	
+	private static com.google.common.cache.Cache<Object, Object> cache;
+	private static Map<Class<?>, List<Object>> keyClassesMap;
+	
+	static {
+		cache = com.google.common.cache.CacheBuilder
+						.newBuilder()
+						.maximumSize(1000)
+						.expireAfterAccess(30, TimeUnit.MINUTES)
+						.expireAfterWrite(60, TimeUnit.MINUTES)
+						.build();
+		keyClassesMap = new HashMap<Class<?>, List<Object>>();
+	}
+	
+	public static CacheBuilder newBuilder() {
+		return new CacheBuilder();
+	}
+	
+	public static Object get(Object key) {
+		logger.info("Getting from cache {}", key.toString());
+		return cache.getIfPresent(key);
+	}
+	
+	public static Object get(Object... keys) {
+		logger.info("Getting cache for {}", convert(keys));
+		return cache.getIfPresent(convert(keys));
+	}
+	
+	public static void put(Object key, Object value) {
+		cache.put(key, value);
+	}
+	
+	private static String convert(Object...keys) {
+		return Arrays.asList(keys).toString();
+	}
+	
+	private static void put(Object key, Object value, Class<?>... keyClasses) {
+		for (Class<?> keyClass : keyClasses) {
+			List<Object> keys = keyClassesMap.get(keyClass);
+			if (keys == null) keys = new ArrayList<Object>();
+			keys.add(key);
+			keyClassesMap.put(keyClass, keys);
+		}
+		cache.put(key, value);
+	}
+	
+	
+	public static void evict(Object key) {
+		cache.invalidate(key);
+	}
+	
+	public static void evict(Class<?> keyClass) {
+		List<Object> keys = keyClassesMap.get(keyClass);
+		if (keys != null) {
+			for (Object key : keys) {
+				evict(key);
+			}
+		}
+		keyClassesMap.remove(keyClass);
+	}
+	
+	public static void clear() {
+		cache.invalidateAll();
+		keyClassesMap.clear();
+	}
+	
+	public static class CacheBuilder {
+		
+		private Class<?>[] classes;
+		private Object[] keys;
+		private Object key;
+		private Object value;
 
-	private final Wrapper wrapper;
-	
-	public Cache(Wrapper wrapper, Object... keys) {
-		wrapper.setFeature(Feature.CACHE_MODE, true);
-		wrapper.getCache().setKey(keys);
-		this.wrapper = wrapper;
-	}
-	
-	public Cache(Wrapper wrapper) {
-		wrapper.setFeature(Feature.CACHE_MODE, true);
-		this.wrapper = wrapper;
-	}
-	
-	public Cache<T> query(String query){
-		wrapper.setQueryString(query);
-		return this;
-	}
-	
-	public Cache<T> listen(Class<?>... classes){
-		wrapper.getCache().setListenerClasses(classes);
-		return this;
-	}
-	
-	public From<?> from(Class<?> entityClass) {
-		return new From<>(wrapper, entityClass);
-	}
-	
-	public Where<T> where(String field) {
-		return new Where<T>(wrapper, field);
-	}
-	
-	public Where<T> where(Map<String, Object> parameters){
-		return new Where<T>(wrapper, parameters);
-	}
-	
-	public Select<T> select(String field) {
-		return new Select<T>(wrapper, field);
-	}
+		public CacheBuilder listen(Class<?>... classes) {
+			this.classes = classes;
+			return this;
+		}
+		
+		public CacheBuilder keys(Object... keys) {
+			this.keys = keys;
+			return this;
+		}
 
-	public Number count() {
-		return new Executer<>(wrapper).count();
+		public CacheBuilder key(Object key) {
+			this.key = key;
+			return this;
+		}
+		
+		public CacheBuilder value(Object value) {
+			this.value = value;
+			return this;
+		}
+		
+		public void build() {
+			validate();
+			if (key == null) {
+				key = convert(keys);
+			}
+			if (classes == null) {
+				put(key, value);
+			}else {
+				put(key, value, classes);
+			}
+		}
+		
+		private void validate() {
+			if (value==null) throw new IllegalArgumentException("No value was informed.");
+			if (key==null && keys == null) throw new IllegalArgumentException("No keys was informed.");
+		}
+		
 	}
-	
-	public Number sum(String field) {
-		return new Executer<>(wrapper, field).sum();
-	}
-
-	public List<T> find() {
-		return new Executer<T>(wrapper).find();
-	}
-
-	public Order<T> orderBy(String... fields) {
-		return new Order<>(wrapper, fields);
-	}
-	
-	public String getQueryString() {
-		return new Executer<>(wrapper).getQueryString();
-	}
-	
-	public Offset<T> offset(int offset){
-		return new Offset<>(wrapper, offset);
-	}
-	
-	public Limit<T> limit(int limit){
-		return new Limit<>(wrapper, limit);
-	}
-	
 }
