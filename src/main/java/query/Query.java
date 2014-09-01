@@ -38,6 +38,11 @@ public class Query<T> {
 		return new From<>(wrapper, entityClass);
 	}
 	
+	@Deprecated
+	public Select<T> field(String field) {
+		return new Select<T>(wrapper, field);
+	} 
+	
 	public Where<T> where(String field) {
 		return new Where<T>(wrapper, field);
 	}
