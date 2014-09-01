@@ -1,4 +1,4 @@
-package query.impl;
+package query;
 
 import java.util.List;
 import java.util.Map;

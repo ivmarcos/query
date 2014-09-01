@@ -8,9 +8,9 @@ import javax.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import query.Parser;
 import query.domain.Builder;
 import query.domain.Wrapper;
-import query.impl.Parser;
 import query.model.Parameter;
 import query.model.Statement;
 import query.util.Strings;

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import query.Query;
 import query.mock.MockEntity;
 
 public class QueryImplTest {

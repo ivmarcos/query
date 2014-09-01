@@ -1,4 +1,4 @@
-package query.impl;
+package query;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;

@@ -8,9 +8,9 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import query.QueryCache;
+import query.Reflection;
 import query.domain.Wrapper;
-import query.impl.QueryCache;
-import query.impl.Reflection;
 
 public class QueryWrapper implements Wrapper { 
 

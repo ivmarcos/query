@@ -1,4 +1,4 @@
-package query.impl;
+package query;
 
 import java.util.ArrayList;
 import java.util.Arrays;

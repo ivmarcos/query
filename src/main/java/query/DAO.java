@@ -1,4 +1,4 @@
-package query.impl;
+package query;
 
 import java.io.Serializable;
 import java.util.List;
@@ -54,7 +54,7 @@ public class DAO<T> implements Serializable {
 		return this;
 	}
 	
-	public Where<T> where(Map<String, Object> parameters){
+	public Where<T> parameters(Map<String, Object> parameters){
 		return getQuery().parameters(parameters);
 	}
 	

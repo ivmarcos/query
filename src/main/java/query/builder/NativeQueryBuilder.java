@@ -5,9 +5,9 @@ import java.util.Iterator;
 
 import javax.persistence.Query;
 
+import query.Reflection;
 import query.domain.Builder;
 import query.domain.Wrapper;
-import query.impl.Reflection;
 import query.model.OrderParameter;
 import query.model.Parameter;
 import query.model.Statement;

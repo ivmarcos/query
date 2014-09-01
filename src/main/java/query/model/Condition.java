@@ -2,10 +2,10 @@ package query.model;
 
 import java.util.List;
 
+import query.Executer;
+import query.Order;
+import query.Where;
 import query.domain.Wrapper;
-import query.impl.Executer;
-import query.impl.Order;
-import query.impl.Where;
 import query.model.Syntax.Operator;
 
 public class Condition<T>  {

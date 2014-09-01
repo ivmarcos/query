@@ -6,9 +6,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import query.Reflection;
 import query.domain.StatementBuilder;
 import query.domain.Wrapper;
-import query.impl.Reflection;
 import query.model.Feature;
 import query.model.Type;
 

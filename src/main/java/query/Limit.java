@@ -1,25 +1,25 @@
-package query.impl;
+package query;
 
 import java.util.List;
 
 import query.domain.Wrapper;
 
-public class Group<T> {
-	
+public class Limit<T> {
+
 	private final Wrapper wrapper;
 	
-	public Group(Wrapper wrapper, String[] fields) {
-		wrapper.setGroupByFields(fields);
+	public Limit(Wrapper wrapper, int limit) {
+		wrapper.setLimit(limit);
 		this.wrapper = wrapper;
 	}
-
+	
 	public List<T> find() {
-		return new Executer<T>(wrapper).find();
+		return null;
 	}
-
+	
 	public String getQueryString() {
 		return new Executer<>(wrapper).getQueryString();
 	}
-	
+
 	
 }

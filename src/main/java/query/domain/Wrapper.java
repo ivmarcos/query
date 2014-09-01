@@ -5,8 +5,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import query.impl.QueryCache;
-import query.impl.Reflection;
+import query.QueryCache;
+import query.Reflection;
 import query.model.Feature;
 import query.model.Metrics;
 import query.model.OrderParameter;

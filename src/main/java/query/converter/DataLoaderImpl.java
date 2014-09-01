@@ -6,11 +6,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import query.QueryClassReflection;
 import query.annotations.AfterLoad;
 import query.annotations.Mapped;
 import query.domain.DataConverter;
 import query.domain.FieldConverter;
-import query.impl.QueryClassReflection;
 import query.model.QueryException;
 
 public class DataLoaderImpl implements DataConverter{

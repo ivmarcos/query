@@ -4,10 +4,10 @@ package query.builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import query.CacheResult;
+import query.QueryResult;
 import query.domain.Result;
 import query.domain.Wrapper;
-import query.impl.CacheResult;
-import query.impl.QueryResult;
 
 public class ResultBuilder<T> {
 
