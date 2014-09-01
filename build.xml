@@ -85,10 +85,8 @@
           target: war
          ================================= -->
 	<target name="jar" description="--> generate war file" depends="compile">
-		<move file="${build.dir}/META-INF/${persistence}"
-			tofile="${build.dir}/META-INF/persistence.xml"/>
-		<jar destfile="${output.dir}/${project.name}.jar">
-			<zipfileset dir="${webapp.dir}" />
+		<jar destfile="${output.dir}/${project.name}-${project.version}.jar">
+			<zipfileset dir="${build.dir}" />
 		</jar>
 	</target>
 	
