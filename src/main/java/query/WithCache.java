@@ -44,8 +44,8 @@ public class WithCache<T> {
 		return new Where<T>(wrapper, field);
 	}
 	
-	public Where<T> where(Map<String, Object> parameters){
-		return new Where<T>(wrapper, parameters);
+	public Parameters<T> parameters(Map<String, Object> parameters){
+		return new Parameters<T>(wrapper, parameters);
 	}
 	
 	public Select<T> select(String field) {

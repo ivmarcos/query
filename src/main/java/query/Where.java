@@ -1,8 +1,6 @@
 package query;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import query.domain.Parametizer;
 import query.domain.Wrapper;
@@ -29,12 +27,7 @@ public class Where<T> implements Parametizer<T> {
 		this.field = field;
 	}
 	
-	public Where(Wrapper wrapper, Map<String, Object> parameters) {
-		this.wrapper = wrapper;
-		for (Entry<String, Object> entry : parameters.entrySet()) {
-			wrapper.addParameter(new Parameter(Operator.AND, Comparator.IS, entry.getKey(), entry.getValue()));
-		}
-	}
+	
 
 	@Override
 	public Condition<T> is(Object value) {
@@ -91,5 +84,6 @@ public class Where<T> implements Parametizer<T> {
 		return new Condition<T>(wrapper, new Parameter(operator, Comparator.IN, field, values));
 	}
 	
+
 	
 }

@@ -49,6 +49,10 @@ public class Condition<T>  {
 		return new Executer(wrapper, field).sum();
 	}
 	
+	public int update() {
+		return new Executer(wrapper).update();
+	}
+	
 	public String getQueryString() {
 		return new Executer(wrapper).getQueryString();
 	}

@@ -69,6 +69,10 @@ public class Executer<T> {
 		return new ResultBuilder(wrapper).build().getQuery();
 	}
 	
+	public List<Object[]> listObject(){
+		return new ResultBuilder(wrapper).build().listObject();
+	}
+	
 	public String getQueryString() {
 		new ResultBuilder(wrapper).build();
 		metrics.end();

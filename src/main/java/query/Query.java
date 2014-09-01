@@ -12,6 +12,10 @@ public class Query<T> {
 
 	private final Wrapper wrapper;
 	
+	public Query(Wrapper wrapper) {
+		this.wrapper = wrapper;
+	}
+	
 	public Query(EntityManager entityManager) {
 		wrapper = new QueryWrapper(entityManager);
 	}
@@ -34,7 +38,7 @@ public class Query<T> {
 		return new WithCache<T>(wrapper, keys);
 	}
 
-	public From<?> from(Class<?> entityClass) {
+	public From from(Class<?> entityClass) {
 		return new From<>(wrapper, entityClass);
 	}
 	
@@ -47,8 +51,8 @@ public class Query<T> {
 		return new Where<T>(wrapper, field);
 	}
 	
-	public Where<T> parameters(Map<String, Object> parameters){
-		return new Where<T>(wrapper, parameters);
+	public Parameters<T> parameters(Map<String, Object> parameters){
+		return new Parameters<T>(wrapper, parameters);
 	}
 	
 	public Select<T> select(String field) {
@@ -81,5 +85,9 @@ public class Query<T> {
 	
 	public Limit<T> limit(int limit){
 		return new Limit<>(wrapper, limit);
+	}
+	
+	public List<Object[]> listObject() {
+		return new Executer<T>(wrapper).listObject();
 	}
 }

@@ -7,6 +7,10 @@ import java.util.Map;
 import javax.persistence.Cache;
 import javax.persistence.EntityManager;
 
+import query.domain.Wrapper;
+import query.model.Feature;
+import query.model.QueryWrapper;
+
 public class DAO<T> implements Serializable {
 
 	private final EntityManager entityManager;
@@ -54,10 +58,9 @@ public class DAO<T> implements Serializable {
 		return this;
 	}
 	
-	public Where<T> parameters(Map<String, Object> parameters){
-		return getQuery().parameters(parameters);
+	public Parameters<T> parameters(Map<String, Object> parameters){
+		return new Parameters<T>(getWrapper(), parameters);
 	}
-	
 
 	public Where<T> where(String field) {
 		return getQuery().where(field);
@@ -67,7 +70,12 @@ public class DAO<T> implements Serializable {
 		return getQuery().query(query);
 	}
 
-	public Query<?> from(Class<?> entityClass){
+	public Query<?> from(Class<?> entityClass){ 
+		return new Query<>(entityManager, entityClass);
+	}
+
+	@Deprecated
+	public Query<?> select(Class<?> entityClass){
 		return new Query<>(entityManager, entityClass);
 	}
 
@@ -81,6 +89,20 @@ public class DAO<T> implements Serializable {
 	
 	private Query<T> getQuery() {
 		return new Query<T>(entityManager, entityClass);
+	}
+
+	public Order<T> orderBy(String... fields){
+		return new Order<T>(getWrapper(), fields);
+	}
+	
+	private Wrapper getWrapper() {
+		return new QueryWrapper(entityManager, entityClass);
+	}
+	
+	public Query<T> feature(Feature feature, boolean active){
+		Wrapper wrapper = getWrapper();
+		wrapper.setFeature(feature, active);
+		return new Query<T>(wrapper);
 	}
 }
 
