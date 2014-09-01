@@ -14,8 +14,8 @@ import javax.persistence.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import query.annotation.Join;
-import query.annotation.Mapped;
+import query.annotations.Join;
+import query.annotations.Mapped;
 import query.model.QueryException;
 
 
@@ -153,6 +153,6 @@ public class Reflection {
 	}
 	
 	private boolean cached(Field field) {
-		return field.getType().isAnnotationPresent(null);
+		return field.getType().isAnnotationPresent(org.hibernate.annotations.Cache.class);
 	}
 }

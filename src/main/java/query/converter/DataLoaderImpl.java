@@ -6,8 +6,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import query.annotation.AfterLoad;
-import query.annotation.Mapped;
+import query.annotations.AfterLoad;
+import query.annotations.Mapped;
 import query.domain.DataConverter;
 import query.domain.FieldConverter;
 import query.impl.QueryClassReflection;
