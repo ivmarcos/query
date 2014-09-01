@@ -1,0 +1,12 @@
+<ivysettings>
+  <settings defaultResolver="myChain" checkUpToDate="true" />
+  <resolvers>
+    <chain name="myChain">
+      <ibiblio name="jboss" m2compatible="true" root="http://repository.jboss.com/maven2/" />
+      <ibiblio name="jboss-nexus" m2compatible="true" root="http://repository.jboss.org/nexus/content/groups/public-jboss/" />
+      <ibiblio name="jvnet-nexus" m2compatible="true" root="https://maven.java.net/content/repositories/snapshots/" />
+      <ibiblio name="prime-repo" m2compatible="true" root="http://repository.primefaces.org" />
+      <ibiblio name="maven2" m2compatible="true" />
+    </chain>
+  </resolvers>
+</ivysettings>
