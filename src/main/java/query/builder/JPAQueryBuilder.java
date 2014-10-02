@@ -12,6 +12,7 @@ import query.domain.Builder;
 import query.domain.Wrapper;
 import query.model.OrderParameter;
 import query.model.Parameter;
+import query.model.Statement;
 import query.model.Type;
 
 public class JPAQueryBuilder implements Builder{
@@ -35,11 +36,16 @@ public class JPAQueryBuilder implements Builder{
 	
 	@Override
 	public Query createInEntityManager() {
-		logger.info(wrapper.getBuild().toString());
-		if (wrapper.getType() == Type.NAMED_QUERY && wrapper.getParametersToAppend() == null) {
+		if (namedQueryOnly()) {
+			logger.debug("{}: Creating in entityManager by named query only : {}", wrapper,  wrapper.getQueryString());
 			return wrapper.getEntityManager().createNamedQuery(wrapper.getQueryString());
 		}
+		logger.debug("{}: Creating in entityManager by build", wrapper);
 		return wrapper.getEntityManager().createQuery(wrapper.getBuild().toString());
+	}
+	
+	private boolean namedQueryOnly() {
+		return wrapper.getType() == Type.NAMED_QUERY && wrapper.getParametersToAppend() == null && wrapper.getOrderParameters() == null && wrapper.getStatement() == Statement.SELECT;
 	}
 	
 	@Override

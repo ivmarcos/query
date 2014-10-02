@@ -32,4 +32,9 @@ public class ResultBuilder<T> {
 		builder.build();
 	}
 	
+	public void buildQueryString() {
+		QueryBuilder<T> builder = new QueryBuilder<T>(wrapper);
+		builder.buildQueryString();
+	}
+	
 }

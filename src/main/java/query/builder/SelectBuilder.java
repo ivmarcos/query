@@ -1,15 +1,11 @@
 package query.builder;
 
-import java.lang.reflect.Field;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import query.Reflection;
 import query.domain.StatementBuilder;
 import query.domain.Wrapper;
-import query.model.Feature;
 import query.model.Type;
 
 public class SelectBuilder implements StatementBuilder {
@@ -29,48 +25,39 @@ public class SelectBuilder implements StatementBuilder {
 	@Override
 	public void build() {
 		if (wrapper.getQueryString() != null) {
+			logger.debug("{} Building by query", wrapper);
 			buildByQuery();
 		}else {
+			logger.debug("{} Building by statement", wrapper);
 			buildByStatement();
 		}
 	}
 	
 	private void buildByQuery() {
-		if (wrapper.getType() == Type.NAMED_QUERY && wrapper.getParametersToAppend() != null) {
+		if (mustExtractFromNamedQuery()) {
+			logger.info("{} Named query: {}", wrapper, wrapper.getQueryString());
 			wrapper.getBuild().append(wrapper.getReflection().getQueryString(wrapper.getQueryString()));
 		}else {
 			wrapper.getBuild().append(wrapper.getQueryString());
 		}
 	}
 	
+	private boolean mustExtractFromNamedQuery() {
+		return wrapper.getType() == Type.NAMED_QUERY && (wrapper.getParameters() != null || wrapper.getOrderParameters() != null);
+	}
+	
 	private void buildByStatement() {
 		build
 			.append("Select ")
-			.append(reflection.getEntityClassInitials());
-		if (wrapper.getSelectedField() != null) {
-			build
-				.append(".")
-				.append(wrapper.getSelectedField());
-		}
-		build
+			.append(wrapper.distinctSelect() ? "distinct " : "")
+			.append(reflection.getEntityClassInitials())
+			.append(wrapper.getSelectedField() != null ? "." + wrapper.getSelectedField() : "")
 			.append(" from ")
 			.append(reflection.getEntityClassMapping());
 		fetchJoins();
 	}
 	
 	private void fetchJoins() {
-		if (!wrapper.isActive(Feature.FETCH_JOINS)) return; 
-		List<Field> fields = reflection.getFieldsToFetch();
-		logger.info("Joins to fetch: {}", fields.size());
-		for (Field field  : fields) {
-			build.append(" ")
-				.append(reflection.getJoinSyntax(field))
-				.append(" fetch ")
-				.append(reflection.getEntityClassInitials())
-				.append(".")
-				.append(field.getName())
-				.append(" ")
-				.append(field.getName().toLowerCase());
-		}
+		wrapper.getFetchBuilder().build();
 	}
 }

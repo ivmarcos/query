@@ -5,17 +5,16 @@ import org.slf4j.LoggerFactory;
 
 import query.domain.StatementBuilder;
 import query.domain.Wrapper;
+import query.model.Type;
 
 public class CountBuilder implements StatementBuilder {
 	
 	final static Logger logger = LoggerFactory.getLogger(CountBuilder.class);
 
 	private final Wrapper wrapper;
-	private StringBuilder build;
 	
 	public CountBuilder(Wrapper wrapper) {
 		this.wrapper = wrapper;
-		this.build = wrapper.getBuild();
 	}
 
 	@Override
@@ -23,20 +22,36 @@ public class CountBuilder implements StatementBuilder {
 		if (wrapper.getQueryString() != null) {
 			convert();
 		}else {
-			build
+			wrapper.getBuild()
 				.append("Select count(*) from ")
 				.append(wrapper.getReflection().getEntityClassMapping());
 		}
 	}
 	
 	private void convert() {
-		final String buildString = build.toString();
-		final int indexCount = buildString.toLowerCase().indexOf("count");
-		final int indexFrom = buildString.toLowerCase().indexOf("from");
-		if (indexCount<0 || indexCount>indexFrom) {
-			build = new StringBuilder("Select count(*) ").append(buildString.substring(indexFrom, buildString.length()));
+		final String query = getQuery();
+		logger.debug("{} convert to count: {] ", wrapper, query);
+		final int count = query.toLowerCase().indexOf("count");
+		final int from = query.toLowerCase().indexOf("from");
+		if (count < 0 || count > from) {
+			wrapper.getBuild().setLength(0);
+			wrapper.getBuild()
+				.append("Select count(*) ")
+				.append(query.substring(from, query.length()));
 		}
-		logger.info("Count query converted: {}",wrapper.getBuild().toString());
 	}
+	
+	private String getQuery() {
+		if (mustExtractFromNamedQuery()) {
+			return wrapper.getReflection().getQueryString(wrapper.getQueryString());
+		}else {
+			return wrapper.getQueryString();
+		}
+	}
+	
+	private boolean mustExtractFromNamedQuery() {
+		return wrapper.getType() == Type.NAMED_QUERY;
+	}
+	
 	
 }

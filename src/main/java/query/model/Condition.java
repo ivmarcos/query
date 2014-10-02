@@ -3,6 +3,7 @@ package query.model;
 import java.util.List;
 
 import query.Executer;
+import query.Limit;
 import query.Order;
 import query.Where;
 import query.domain.Wrapper;
@@ -32,7 +33,15 @@ public class Condition<T>  {
 	public T findSingle() {
 		return new Executer<T>(wrapper).findSingle();
 	}
-
+	
+	public Object singleObject() {
+		return new Executer<>(wrapper).singleObject();
+	}
+	
+	public List listObject() {
+		return new Executer<>(wrapper).listObject();
+	}
+	
 	public boolean exists() {
 		return new Executer<T>(wrapper).exists();
 	}
@@ -57,4 +66,7 @@ public class Condition<T>  {
 		return new Executer(wrapper).getQueryString();
 	}
 	
+	public Limit<T> limit(int limit){
+		return new Limit<>(wrapper, limit);
+	}
 }

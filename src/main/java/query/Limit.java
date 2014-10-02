@@ -14,7 +14,7 @@ public class Limit<T> {
 	}
 	
 	public List<T> find() {
-		return null;
+		return new Executer<T>(wrapper).find();
 	}
 	
 	public String getQueryString() {

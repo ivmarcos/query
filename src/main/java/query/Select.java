@@ -12,6 +12,11 @@ public class Select<T>{
 		wrapper.setSelectedField(field);
 		this.wrapper = wrapper;
 	}
+	
+	public Select<T> distinct() {
+		wrapper.setDistinctSelect(true);
+		return this;
+	}
 
 	public From from(Class<?> entityClass) {
 		return new From(wrapper, entityClass);
@@ -25,7 +30,7 @@ public class Select<T>{
 		return new Executer<T>(wrapper).find();
 	}
 
-	public T findSingle() {
+	public Object findSingle() {
 		return new Executer<T>(wrapper).findSingle();
 	}
 

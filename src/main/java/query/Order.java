@@ -7,18 +7,27 @@ import query.model.OrderParameter;
 import query.model.Sort;
 
 public class Order<T> {
-
+	
 	private final Wrapper wrapper;
-	private final OrderParameter orderParameter;
+	private OrderParameter orderParameter;
 	private final String[] fields;
 	
 	public Order(Wrapper wrapper, String...fields) {
-		this.fields = fields;
-		this.wrapper = wrapper;
 		orderParameter = new OrderParameter(Sort.ASCENDING, fields);
 		wrapper.addOrderParameter(orderParameter);
+		this.fields = fields;
+		this.wrapper = wrapper;
 	}
-
+	
+	public Order(Wrapper wrapper, String[] fields, Sort sort) {
+		if (fields != null) { 
+			orderParameter = new OrderParameter(sort, fields);
+			wrapper.addOrderParameter(orderParameter);
+		}
+		this.fields = fields;
+		this.wrapper = wrapper;
+	}
+	
 	public Order<T> descending() {
 		int index = wrapper.getOrderParameters().indexOf(orderParameter);
 		wrapper.getOrderParameters().set(index, new OrderParameter(Sort.DESCENDING, fields));
@@ -45,7 +54,7 @@ public class Order<T> {
 		return new Executer<T>(wrapper).find();
 	}
 
-	public T findSingle() {
+	public Object findSingle() {
 		return new Executer<T>(wrapper).findSingle();
 	}
 

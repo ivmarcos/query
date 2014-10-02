@@ -40,12 +40,16 @@ public class Parameter {
 		this.value = value;
 	}
 	
+	public boolean valueAttachable() {
+		return comparator != Comparator.IS_NOT_NULL && comparator != Comparator.IS_NULL;
+	}
+	
 	@Override
 	public String toString() {
 		if (value instanceof Collection) {
-			return field + Arrays.toString(((Collection)value).toArray()) + operator + comparator;
+			return field + "=" + Arrays.toString(((Collection)value).toArray());
 		}
-		return field + value + operator + comparator;
+		return field + "=" + value;
 	}
 
 	@Override

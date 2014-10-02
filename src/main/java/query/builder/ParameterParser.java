@@ -1,4 +1,4 @@
-package query;
+package query.builder;
 
 import java.util.ArrayList;
 
@@ -7,27 +7,23 @@ import org.slf4j.LoggerFactory;
 
 import query.domain.Wrapper;
 import query.model.Parameter;
-import query.model.Type;
 import query.util.Strings;
 
-public class Parser {
+public class ParameterParser {
 
-	final static Logger logger = LoggerFactory.getLogger(Parser.class);
+	final static Logger logger = LoggerFactory.getLogger(ParameterParser.class);
 	
 	private final Wrapper wrapper;
-	private final Type type;
+	private final String queryBuild;
 	
-	public Parser(Wrapper wrapper) {
+	public ParameterParser(Wrapper wrapper) {
 		this.wrapper = wrapper;
-		this.type = wrapper.getType();
+		this.queryBuild = wrapper.getBuild().toString();
 	}
 
 	public void parse() {
-		if (hasNamedQuerySyntax() && type == Type.JPA_QUERY) {
-			wrapper.setType(Type.NAMED_QUERY);
-		}
 		if (hasParametersToCheck()) {
-			if (wrapper.getQueryString() == null) {
+			if (queryBuild == null || queryBuild.isEmpty()) {
 				wrapper.setParametersToAppend(wrapper.getParameters());
 				return;
 			}
@@ -39,15 +35,11 @@ public class Parser {
 	}
 	
 	private boolean alreadyContains(Parameter parameter) {
-		return wrapper.getQueryString().contains(":" + removeSymbols(parameter.getField()));
+		return queryBuild.contains(":" + removeSymbols(parameter.getField()));
 	}
 	
 	private String removeSymbols(String value) {
 		return Strings.noSymbols(value);
-	}
-	
-	private boolean hasNamedQuerySyntax() {
-		return wrapper.getQueryString()!= null && !wrapper.getQueryString().contains(" ");
 	}
 	
 	private boolean hasParametersToCheck() {

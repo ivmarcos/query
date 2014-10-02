@@ -10,6 +10,8 @@ public interface Result<T> {
 	
 	public T single();
 	
+	public Object singleObject();
+	
 	public boolean exists();
 
 	public javax.persistence.Query getQuery();

@@ -16,7 +16,7 @@ public class DAO<T> implements Serializable {
 	private final EntityManager entityManager;
 	private final Class<T> entityClass;
 
-	public DAO (Class<T> entityClass, EntityManager entityManager) {
+	public DAO (EntityManager entityManager, Class<T> entityClass) {
 		this.entityClass = entityClass;
 		this.entityManager = entityManager;
 	}
@@ -70,13 +70,13 @@ public class DAO<T> implements Serializable {
 		return getQuery().query(query);
 	}
 
-	public Query<?> from(Class<?> entityClass){ 
-		return new Query<>(entityManager, entityClass);
+	public <X> Query<X> from(Class<X> entityClass){ 
+		return new Query<X>(entityManager, entityClass);
 	}
 
 	@Deprecated
-	public Query<?> select(Class<?> entityClass){
-		return new Query<>(entityManager, entityClass);
+	public <X> Query<X> select(Class<X> entityClass){
+		return new Query<X>(entityManager, entityClass);
 	}
 
 	public Select<T> select(String field) {
@@ -99,9 +99,9 @@ public class DAO<T> implements Serializable {
 		return new QueryWrapper(entityManager, entityClass);
 	}
 	
-	public Query<T> feature(Feature feature, boolean active){
+	public Query<T> configure(Feature feature, boolean active){
 		Wrapper wrapper = getWrapper();
-		wrapper.setFeature(feature, active);
+		wrapper.configure(feature, active);
 		return new Query<T>(wrapper);
 	}
 }

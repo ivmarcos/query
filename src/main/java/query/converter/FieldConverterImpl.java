@@ -54,6 +54,7 @@ public class FieldConverterImpl implements FieldConverter {
 			if (destination==Integer.class || destination==int.class) return NUMBER_TO_INT;
 		}
 		if (destination==Boolean.class || destination==boolean.class) {
+			if (source==Boolean.class) return SAME_CLASS;
 			if (source==Integer.class) return INTEGER_TO_BOOLEAN;
 			if (source==Byte.class) return BYTE_TO_BOOLEAN;
 			if (source==BigInteger.class) return BIGINTEGER_TO_BOOLEAN;

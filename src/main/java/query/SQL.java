@@ -3,41 +3,29 @@ package query;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import query.domain.Wrapper;
-import query.model.Feature;
+import query.model.Type;
 
-public class WithCache<T> {
-	
-	final static Logger logger = LoggerFactory.getLogger(WithCache.class);
+public class SQL<T> {
 
 	private final Wrapper wrapper;
 	
-	public WithCache(Wrapper wrapper, Object... keys) {
-		wrapper.setFeature(Feature.CACHE_MODE, true);
-		wrapper.getCache().setKey(keys);
+	public SQL(Wrapper wrapper, String sql) {
+		wrapper.setQueryString(sql);
+		wrapper.setType(Type.SQL_QUERY);
 		this.wrapper = wrapper;
 	}
 	
-	public WithCache(Wrapper wrapper) {
-		wrapper.setFeature(Feature.CACHE_MODE, true);
-		this.wrapper = wrapper;
+	public Cache<T> cache(){
+		return new Cache<T>(wrapper);
 	}
 	
-	public WithCache<T> query(String query){
-		wrapper.setQueryString(query);
-		return this;
+	public Cache<T> cache(Object... keys){
+		return new Cache<T>(wrapper, keys);
 	}
-	
-	public WithCache<T> listen(Class<?>... classes){
-		wrapper.getCache().setListenerClasses(classes);
-		return this;
-	}
-	
-	public From<?> from(Class<?> entityClass) {
-		return new From<>(wrapper, entityClass);
+
+	public <X> From<X> from(Class<X> entityClass) {
+		return new From<X>(wrapper, entityClass);
 	}
 	
 	public Where<T> where(String field) {
@@ -80,4 +68,7 @@ public class WithCache<T> {
 		return new Limit<>(wrapper, limit);
 	}
 	
+	public List<Object[]> listObject() {
+		return new Executer<T>(wrapper).listObject();
+	}
 }

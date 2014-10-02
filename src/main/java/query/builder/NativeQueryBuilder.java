@@ -37,10 +37,11 @@ public class NativeQueryBuilder implements Builder{
 	
 	@Override
 	public Query createInEntityManager() {
+		String sql = wrapper.getBuild().toString(); 
 		if (wrapper.getStatement() == Statement.COUNT) {
-			return wrapper.getEntityManager().createNativeQuery(wrapper.getBuild().toString());
+			return wrapper.getEntityManager().createNativeQuery(sql);
 		}else{
-			return wrapper.getEntityManager().createNativeQuery(wrapper.getBuild().toString(), wrapper.getEntityClass());
+			return wrapper.getEntityManager().createNativeQuery(sql, wrapper.getEntityClass());
 		}
 	}
 

@@ -2,8 +2,10 @@ package query.domain;
 
 import java.util.List;
 
-public interface DataConverter {
+public interface DataConverter<T> {
 
-	List populate(Class<?> clazz, List<Object[]> list);
+	List<T> convert(List<Object[]> list);
+	
+	T convert(Object[] data);
 	
 }

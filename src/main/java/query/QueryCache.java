@@ -22,12 +22,12 @@ public class QueryCache {
 		this.wrapper = wrapper;
 	}
 	
-	private boolean isActive() {
-		return wrapper.isActive(Feature.CACHE_MODE);
+	private boolean enabled() {
+		return wrapper.enabled(Feature.CACHE_MODE);
 	} 
 
 	public void put(Object result) {
-		if (!isActive()) return;
+		if (!enabled()) return;
 		Cache
 			.newBuilder()
 			.key(getKey())
@@ -38,7 +38,7 @@ public class QueryCache {
 	}
 	
 	private void lookCache() {
-		logger.info("Looking at cache");
+		logger.debug("{} Looking at cache", wrapper);
 		result = Cache.get(getKey());
 	}
 
@@ -51,7 +51,7 @@ public class QueryCache {
 	}
 	
 	public boolean inCache() {
-		if (isActive()){
+		if (enabled()){
 			lookCache();
 		}
 		return result != null;
@@ -82,4 +82,6 @@ public class QueryCache {
 	public void setListenerClasses(Class<?>[] listenerClasses) {
 		this.listenerClasses = listenerClasses;
 	}
+	
+
 }

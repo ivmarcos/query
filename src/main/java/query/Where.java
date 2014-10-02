@@ -1,5 +1,6 @@
 package query;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import query.domain.Parametizer;
@@ -36,7 +37,7 @@ public class Where<T> implements Parametizer<T> {
 
 	@Override
 	public Condition<T> in(Object... values) {
-		return new Condition<T>(wrapper, new Parameter(operator, Comparator.IN, field, values));
+		return new Condition<T>(wrapper, new Parameter(operator, Comparator.IN, field, Arrays.asList(values)));
 	}
 
 	@Override

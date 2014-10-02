@@ -13,6 +13,10 @@ public class Offset<T> {
 		this.wrapper = wrapper;
 	}
 	
+	public Limit<T> limit(int limit){
+		return new Limit<>(wrapper, limit);
+	}
+	
 	public List<T> find() {
 		return new Executer<T>(wrapper).find();
 	}

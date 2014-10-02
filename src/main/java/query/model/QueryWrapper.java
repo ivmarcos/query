@@ -8,17 +8,30 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import query.DefaultParameterAppender;
 import query.QueryCache;
 import query.Reflection;
+import query.builder.FetchBuilder;
+import query.domain.Builder;
+import query.domain.ParameterAppender;
+import query.domain.StatementBuilder;
 import query.domain.Wrapper;
 
 public class QueryWrapper implements Wrapper { 
 
+	private static int id;
+	
 	private final EntityManager entityManager;
 	private List<Parameter> parameters;
 	private List<Parameter> parametersToAppend;
 	private List<OrderParameter> orderParameters;
+	private StatementBuilder statementBuilder;
+	private ParameterAppender parameterAppender;
+	private Builder builder;
 	private Class<?> entityClass;
+	private Class<?>[] fetchClasses;
+	private Class<?>[] exceptionFetchClasses;
+	private String[] fetchFields;
 	private String selectedField;
 	private String[] groupByFields;
 	private Type type;
@@ -26,6 +39,7 @@ public class QueryWrapper implements Wrapper {
 	private StringBuilder build;
 	private Reflection reflection;
 	private Sort sort;
+	private FetchBuilder fetchBuilder;
 	private Query query;
 	private Metrics metrics;
 	private String queryString;
@@ -33,6 +47,7 @@ public class QueryWrapper implements Wrapper {
 	private int offset;
 	private int limit;
 	private QueryCache cache;
+	private boolean distinctSelect;
 	
 	public QueryWrapper (EntityManager entityManager) {
 		this.entityManager = entityManager;
@@ -46,12 +61,13 @@ public class QueryWrapper implements Wrapper {
 	}
 
 	private void init() {
-		metrics = new Metrics();
-		loadFeatures();
+		id++;
+		build = new StringBuilder();
 		type = Type.JPA_QUERY; 
 		statement = Statement.SELECT;
 		sort = Sort.ASCENDING;
-		build = new StringBuilder();
+		loadFeatures();
+		metrics = new Metrics(this);
 	}
 	
 	private void loadFeatures() {
@@ -168,7 +184,7 @@ public class QueryWrapper implements Wrapper {
 	}
 
 	@Override
-	public boolean isActive(Feature feature) {
+	public boolean enabled(Feature feature) {
 		return featuresMap.get(feature);
 	}
 
@@ -234,9 +250,82 @@ public class QueryWrapper implements Wrapper {
 	}
 
 	@Override
-	public void setFeature(Feature feature, boolean active) {
+	public void configure(Feature feature, boolean active) {
 		featuresMap.put(feature, active);
 	}
 
+	public boolean distinctSelect() {
+		return distinctSelect;
+	}
+
+	@Override
+	public void setDistinctSelect(boolean distinctSelect) {
+		this.distinctSelect = distinctSelect;
+	}
+
+	@Override
+	public FetchBuilder getFetchBuilder() {
+		if (fetchBuilder == null) {
+			fetchBuilder = new FetchBuilder(this);
+		}
+		return fetchBuilder;
+	}
+
+	@Override
+	public Class<?>[] getFetchClasses() {
+		return fetchClasses;
+	}
+
+	@Override
+	public void setFetchClasses(Class<?>[] fetchClasses) {
+		this.fetchClasses = fetchClasses;
+	}
+
+	@Override
+	public String[] getFetchFields() {
+		return fetchFields;
+	}
+
+	@Override
+	public void setFetchFields(String[] fetchFields) {
+		this.fetchFields = fetchFields;
+	}
+
+	@Override
+	public Class<?>[] getExceptionFetchClasses() {
+		return exceptionFetchClasses;
+	}
+
+	@Override
+	public void setExceptionFetchClasses(Class<?>[] exceptionFetchClasses) {
+		this.exceptionFetchClasses = exceptionFetchClasses;
+	}
 	
+	@Override
+	public Builder getBuilder() {
+		if (builder == null) {
+			builder = type.createBuilder(this);
+		}
+		return builder;
+	}
+
+	@Override
+	public ParameterAppender getParameterAppender() {
+		if (parameterAppender == null) {
+			parameterAppender = new DefaultParameterAppender(this);
+		}
+		return parameterAppender;
+	}
+
+	@Override
+	public StatementBuilder getStatementBuilder() {
+		if (statementBuilder == null) {
+			statementBuilder = statement.createStatementBuilder(this);
+		}
+		return statementBuilder;
+	}
+
+	public String toString() {
+		return "QB" + id;
+	}
 }

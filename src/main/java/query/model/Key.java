@@ -14,6 +14,7 @@ public class Key {
 	private final int limit;
 	private final Sort sort;
 	private final String[] groupByFields;
+	private final Statement statement;
 	private final List<OrderParameter> orderParameters;
 	private final List<Parameter> parameters;
 	private final String selectedField;
@@ -30,6 +31,7 @@ public class Key {
 		this.parameters = wrapper.getParameters();
 		this.selectedField = wrapper.getSelectedField();
 		this.type = wrapper.getType();
+		this.statement = wrapper.getStatement();
 	}
 
 	@Override
@@ -80,6 +82,8 @@ public class Key {
 				return false;
 			}
 		}
+		if (type != other.type) return false;
+		if (statement != other.statement) return false;
 		if (!Arrays.equals(groupByFields, other.groupByFields))
 			return false;
 		if (orderParameters == null) {
@@ -100,8 +104,6 @@ public class Key {
 		}
 		return true;
 	}
-	
-	
 	
 	
 }

@@ -3,11 +3,14 @@ package query;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.RequestScoped;
 import javax.persistence.EntityManager;
 
 import query.domain.Wrapper;
+import query.model.Feature;
 import query.model.QueryWrapper;
 
+@RequestScoped
 public class Query<T> {
 
 	private final Wrapper wrapper;
@@ -25,27 +28,44 @@ public class Query<T> {
 		wrapper.setEntityClass(entityClass);
 	}
 	
+	public Query(Wrapper wrapper, String query) {
+		wrapper.setQueryString(query);
+		this.wrapper = wrapper;
+	}
+	
 	public Query<T> query(String query){
 		wrapper.setQueryString(query);
 		return this;
 	}
 	
-	public WithCache<T> cache(){
-		return new WithCache<T>(wrapper);
-	}
-	
-	public WithCache<T> cache(Object... keys){
-		return new WithCache<T>(wrapper, keys);
+	public Fetch<T> fetch(Class<?>... fetchClasses){
+		return new Fetch<T>(wrapper, fetchClasses);
 	}
 
-	public From from(Class<?> entityClass) {
-		return new From<>(wrapper, entityClass);
+	public Fetch<T> fetch(String... fetchFields){
+		return new Fetch<T>(wrapper, fetchFields);
+	}
+
+	public Fetch<T> fetch(){
+		wrapper.configure(Feature.FETCH_JOINS, true);
+		return new Fetch<T>(wrapper);
 	}
 	
-	@Deprecated
-	public Select<T> field(String field) {
-		return new Select<T>(wrapper, field);
-	} 
+	public SQL<T> sql(String sql){
+		return new SQL<>(wrapper, sql);
+	}
+	
+	public Cache<T> cache(){
+		return new Cache<T>(wrapper);
+	}
+	
+	public Cache<T> cache(Object... keys){
+		return new Cache<T>(wrapper, keys);
+	}
+
+	public <X> From<X> from(Class<X> entityClass) {
+		return new From<X>(wrapper, entityClass);
+	}
 	
 	public Where<T> where(String field) {
 		return new Where<T>(wrapper, field);
@@ -55,8 +75,12 @@ public class Query<T> {
 		return new Parameters<T>(wrapper, parameters);
 	}
 	
-	public Select<T> select(String field) {
-		return new Select<T>(wrapper, field);
+	public Select select(String field) {
+		return new Select(wrapper, field);
+	}
+	
+	public <X> Select<X> select(String field, Class<X> returnClass) {
+		return new Select<X>(wrapper, field);
 	}
 
 	public Number count() {
@@ -69,6 +93,10 @@ public class Query<T> {
 
 	public List<T> find() {
 		return new Executer<T>(wrapper).find();
+	}
+	
+	public T find(Object id) {
+		return (T) wrapper.getEntityManager().find(wrapper.getEntityClass(), id);
 	}
 
 	public Order<T> orderBy(String... fields) {

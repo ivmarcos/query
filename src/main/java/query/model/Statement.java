@@ -4,6 +4,7 @@ import query.builder.CountBuilder;
 import query.builder.DeleteBuilder;
 import query.builder.SelectBuilder;
 import query.builder.SumBuilder;
+import query.builder.UpdateBuilder;
 import query.domain.StatementBuilder;
 import query.domain.StatementBuilderFactory;
 import query.domain.Wrapper;
@@ -25,7 +26,7 @@ public enum Statement implements StatementBuilderFactory{
 	UPDATE{
 		@Override
 		public StatementBuilder createStatementBuilder(Wrapper wrapper) {
-			return null;
+			return new UpdateBuilder(wrapper);
 		}
 	},
 	SUM{

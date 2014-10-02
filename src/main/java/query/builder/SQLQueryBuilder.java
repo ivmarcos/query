@@ -25,16 +25,14 @@ public class SQLQueryBuilder implements Builder {
 	public void appendField(Parameter parameter) {
 		final String key = parameter.getField();
 		wrapper.getBuild()
-			.append(reflection.getMappedSQLName(key))
-			.append(reflection.getComparator(key))
-			.append(":")
-			.append(key.replace(".", ""));
+			.append(reflection.getMappedSQLName(key));
 	}
 	
 	
 	@Override
 	public Query createInEntityManager() {
-		return wrapper.getEntityManager().createNativeQuery(wrapper.getBuild().toString());
+		String sql = wrapper.getBuild().toString();
+		return wrapper.getEntityManager().createNativeQuery(sql);
 	}
 
 	@Override

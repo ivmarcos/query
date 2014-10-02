@@ -1,15 +1,8 @@
 package query.converter;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
-import query.domain.Data;
-import query.domain.DataConverter;
-
-public class GenericDataConverter implements DataConverter{
-	
+public class GenericDataConverter{
+	/*
 	private Class<?> clazz;
 	private List<Object[]> list;
 	
@@ -19,7 +12,7 @@ public class GenericDataConverter implements DataConverter{
 	}
 
 	@Override
-	public List populate(Class<?> clazz, List<Object[]> list)  {
+	public List convert(List<Object[]> list)  {
 		init(clazz, list);
 		List result = new ArrayList();
 		final int size = list.get(0).length + 1;
@@ -50,6 +43,6 @@ public class GenericDataConverter implements DataConverter{
 			return date;
 		}
 		return object;
-	}
+	}*/
 	
 }

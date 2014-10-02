@@ -6,8 +6,10 @@ import query.builder.ResultBuilder;
 import query.domain.Wrapper;
 import query.model.Metrics;
 import query.model.Statement;
+import query.model.Type;
 
 public class Executer<T> {
+	
 
 	private final Wrapper wrapper;
 	private final Metrics metrics;
@@ -30,9 +32,9 @@ public class Executer<T> {
 	}
 
 	public T findSingle() {
-		T t = new ResultBuilder<T>(wrapper).build().single();
+		T result = new ResultBuilder<T>(wrapper).build().single();
 		metrics.end();
-		return t;
+		return result;
 	}
 
 	public boolean exists() {
@@ -43,38 +45,49 @@ public class Executer<T> {
 
 	public Number count() {
 		wrapper.setStatement(Statement.COUNT);
-		Number result = (Number) new ResultBuilder(wrapper).build().single();
+		Number result = (Number) new ResultBuilder(wrapper).build().singleObject();
 		metrics.end();
 		return result;
 	}
 
 	public Number sum() {
 		wrapper.setStatement(Statement.SUM);
-		Number result = (Number) new ResultBuilder(wrapper).build().single();
+		Number result = (Number) new ResultBuilder(wrapper).build().singleObject();
 		metrics.end();
 		return result;
 	}
 	
 	public int delete() {
 		wrapper.setStatement(Statement.DELETE);
-		return new ResultBuilder(wrapper).build().getQuery().executeUpdate();
+		javax.persistence.Query query = new ResultBuilder(wrapper).build().getQuery();
+		int result = query.executeUpdate();
+		metrics.end();
+		return result;
 	}
 	
 	public int update() {
 		wrapper.setStatement(Statement.UPDATE);
-		return new ResultBuilder(wrapper).build().getQuery().executeUpdate();
+		javax.persistence.Query query = new ResultBuilder(wrapper).build().getQuery();
+		int result = query.executeUpdate();
+		metrics.end();
+		return result;
 	}
 	
 	public javax.persistence.Query getQuery() {
 		return new ResultBuilder(wrapper).build().getQuery();
 	}
 	
-	public List<Object[]> listObject(){
+	public List listObject(){
+		wrapper.setType(Type.SQL_QUERY);
 		return new ResultBuilder(wrapper).build().listObject();
 	}
 	
+	public Object singleObject() {
+		return new ResultBuilder(wrapper).build().singleObject();
+	}
+	
 	public String getQueryString() {
-		new ResultBuilder(wrapper).build();
+		new ResultBuilder(wrapper).buildQueryString();
 		metrics.end();
 		return wrapper.getBuild().toString();
 	}

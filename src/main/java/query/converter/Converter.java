@@ -7,24 +7,34 @@ import org.slf4j.LoggerFactory;
 
 import query.domain.DataConverter;
 
-public class Converter {
+public class Converter<T> {
 	
 	final static Logger logger = LoggerFactory.getLogger(Converter.class.getName());
 	
-	private final Class<?> clazz;
+	private final Class<T> returnClass;
+	private final DataConverter<T> converter;
 	
-	public Converter(Class<?> clazz) {
-		this.clazz = clazz;
+	public Converter(Class<T> returnClass) {
+		this.returnClass = returnClass;
+		this.converter = getDataConverter();
 	}
 	
-	public List from(List<Object[]> resultList) {
-		return populateList(resultList);
+	public List<T> convert(List<Object[]> list) {
+		logger.debug("Converting list to {}", returnClass.getName());
+		return converter.convert(list);
 	}
 	
-	private List populateList(List<Object[]> list){
-		DataConverter loader = new DataLoaderImpl();
-		List result = loader.populate(clazz, list);
-		return result;
+	public T convert(Object[] object) {
+		logger.debug("Converting array to {}", returnClass.getName());
+		return (T) converter.convert(object);
+	}
+	
+	
+	private DataConverter<T> getDataConverter() {
+		if (returnClass == String[].class) {
+			return new StringDataConverter();
+		}
+		return new MappedDataConverter<T>(returnClass);
 	}
 	
 	
